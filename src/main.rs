@@ -1,6 +1,6 @@
 use std::time::Duration;
 use tide::Response;
-use rand::{thread_rng, Rng, RngCore};
+use rand::{thread_rng, RngCore};
 use tide::http::mime;
 
 #[async_std::main]
@@ -11,7 +11,7 @@ async fn main() -> tide::Result<()>{
     Ok(())
 }
 
-async fn handle(_request: tide::Request<()>) -> Response {
+async fn handle(_request: tide::Request<()>) -> tide::Result {
     async_std::task::sleep(Duration::from_secs(15)).await;
     let mut rng = thread_rng();
     let mut body = [0u8; 4096];
@@ -19,10 +19,10 @@ async fn handle(_request: tide::Request<()>) -> Response {
     let body_str = unsafe {
         std::str::from_utf8_unchecked(&body)
     };
-    Response::builder(200)
+    Ok(Response::builder(200)
         .body(format!("<html>{}</html>", body_str))
         .header("x-powered-by", "PHP/7.3.10")
         .header("server", "Apache/2.4.50 (Unix)")
         .content_type(mime::HTML)
-        .build()
+        .build())
 }
