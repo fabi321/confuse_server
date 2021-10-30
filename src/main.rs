@@ -21,7 +21,7 @@ async fn handle(_request: tide::Request<()>) -> tide::Result {
         std::str::from_utf8_unchecked(&body)
     };
     Ok(Response::builder(200)
-        .body(format!("<html>{}</html>", body_str))
+        .body(format!("<!DOCTYPE html><html>{}</html>", body_str))
         .header("x-powered-by", "PHP/7.3.10")
         .header("server", "Apache/2.4.50 (Unix)")
         .content_type(mime::HTML)
