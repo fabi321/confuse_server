@@ -6,7 +6,8 @@ use tide::http::mime;
 #[async_std::main]
 async fn main() -> tide::Result<()>{
     let mut app = tide::new();
-    app.at("/*").all(handle);
+    app.at("/").all(handle);
+    app.at("*path").all(handle);
     app.listen("127.0.0.1:8090").await?;
     Ok(())
 }
