@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 use tide::{Response, http::headers::HeaderValues};
 use rand::{thread_rng, RngCore};
 use tide::http::mime;
@@ -7,12 +7,14 @@ use trust_dns_resolver::Name;
 
 struct Config {
     pub googlebot_redirect: String,
-
 }
 
 #[async_std::main]
 async fn main() -> tide::Result<()>{
-    let mut app = tide::new();
+    let config = Config {
+        googlebot_redirect: std::env::var("CONFUSE_SERVER_GOOGLEBOT_REDIRECT").unwrap()
+    };
+    let mut app = tide::with_state(Arc::new(config));
     app.at("/").all(handle);
     app.at("*path").all(handle);
     app.listen("127.0.0.1:8090").await?;
@@ -46,9 +48,9 @@ async fn is_google(ip_addr: Option<&str>, user_agent: Option<&HeaderValues>) -> 
     }
 }
 
-async fn handle(request: tide::Request<()>) -> tide::Result {
+async fn handle(request: tide::Request<Arc<Config>>) -> tide::Result {
     if is_google(request.peer_addr(), request.header("User-Agent")).await {
-        return Ok(Response::builder(301).header("Location", "https://rpi.heep.sax.de/").build())
+        return Ok(Response::builder(301).header("Location", &request.state().googlebot_redirect).build())
     }
     async_std::task::sleep(Duration::from_secs(15)).await;
     let mut rng = thread_rng();
