@@ -9,3 +9,4 @@ edition = "2021"
 tide = "0.16.0"
 async-std = { version = "1.10.0", features = ["attributes"] }
 rand = "0.8"
+dns-lookup = "1"
