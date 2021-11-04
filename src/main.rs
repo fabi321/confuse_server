@@ -61,6 +61,7 @@ async fn handle(request: tide::Request<()>) -> tide::Result {
         .body(format!("<!DOCTYPE html><html><h1>Wordpress admin page phpinfo pwned you hacked{}</html>", body_str))
         .header("x-powered-by", "PHP/7.3.10")
         .header("server", "Apache/2.4.50 (Unix), mod_killing_mtm")
+        .header("x-killed-by", "confuse_server -> https://github.com/fabi321/confuse_server")
         .content_type(mime::HTML)
         .build())
 }
